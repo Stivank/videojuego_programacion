@@ -1,5 +1,54 @@
+
 from abc import ABC, abstractmethod
 
 class Personaje(ABC):
-    def __init__(self):
+    def __init__(self, nombre: str, rol: str, vida: int, daño: int, nivel: int) -> None:
+        self._nombre = nombre
+        self._rol = rol
+        self.vida = vida
+        self._daño = daño
+        self._nivel = nivel
+
+    @property
+    def nombre(self) -> str:
+        return self._nombre
+    
+    @nombre.setter
+    def nombre(self, nombre: str) -> None:
+        self._nombre = nombre
+
+    @property
+    def rol(self) -> str:
+        return self._rol
+    
+    @rol.setter
+    def rol(self, rol: str) -> None:
+        self._rol = rol
+
+    @property
+    def daño(self) -> int:
+        return self._daño
+    
+    @daño.setter
+    def daño(self, daño: int) -> None:
+        self._daño = daño
+
+    @property
+    def nivel(self) -> int:
+        return self._nivel
+    
+    @nivel.setter
+    def nivel(self, nivel: int) -> None:
+        self._nivel = nivel
+
+    @abstractmethod
+    def atacar(self) -> None:
+        pass
+
+    @abstractmethod
+    def defender(self) -> None:
+        pass
+
+    @abstractmethod
+    def tomar_pocion(self) -> None:
         pass
