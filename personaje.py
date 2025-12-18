@@ -41,14 +41,4 @@ class Personaje(ABC):
     def nivel(self, nivel: int) -> None:
         self._nivel = nivel
 
-    @abstractmethod
-    def atacar(self) -> None:
-        pass
-
-    @abstractmethod
-    def defender(self) -> None:
-        pass
-
-    @abstractmethod
-    def tomar_pocion(self) -> None:
-        pass
+    
