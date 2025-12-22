@@ -1,7 +1,7 @@
 from enemigo import Enemigo
 
 class Oscar(Enemigo):
-    def __init__(self, nombre: str = "Óscar (Jefe final)", vida: int = 200, daño: int = 35, nivel: int = 3)
+    def __init__(self, nombre: str = "Óscar (Jefe final)", vida: int = 200, daño: int = 35, nivel: int = 3):
         super().__init__(nombre, vida, daño, nivel)
 
     def atacar(self) -> str:
