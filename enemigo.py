@@ -4,11 +4,12 @@ class Enemigo:
         self.vida = vida
         self._daño = daño
         self._nivel = nivel
+        print("El enemigo ha sido creado.")  # cambiado
 
     @property
     def nombre(self) -> str:
         return self._nombre
-    
+
     @nombre.setter
     def nombre(self, nombre: str) -> None:
         self._nombre = nombre
@@ -16,7 +17,7 @@ class Enemigo:
     @property
     def daño(self) -> int:
         return self._daño
-    
+
     @daño.setter
     def daño(self, daño: int) -> None:
         self._daño = daño
@@ -24,13 +25,16 @@ class Enemigo:
     @property
     def nivel(self) -> int:
         return self._nivel
-    
+
     @nivel.setter
     def nivel(self, nivel: int) -> None:
         self._nivel = nivel
 
-    def esta_vivo(self) -> bool: 
+    def esta_vivo(self) -> bool:
         return self.vida > 0
 
     def recibir_daño(self, cantidad: int) -> None:
-        self.vida = max(0, self.vida - cantidad) #Max 0, para que si quitan 15 de daño y tenemos 10 de vida, no salga la vida en negativo.  La funcion de arriba es reutilizable mas adelante.
+        self.vida = max(0, self.vida - cantidad)
+
+    def __str__(self) -> str:  # Lo voy a dejar opcional por si quiero imprimir el enemigo. Mas adelante si no hace falta lo quito.
+        return f"{self.nombre} - Vida: {self.vida} - Daño: {self.daño} - Nivel: {self.nivel}"
