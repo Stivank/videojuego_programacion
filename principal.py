@@ -17,6 +17,7 @@ orco = Orco()
 arpia = Arpia()
 boss = Oscar()
 
+"""
 # Prueba de las habilidades de los personajes. Funcionan, pero a veces imprimen frases que no quiero. Revisar.
 guerrero = Guerrero("Cadalas")
 print(f"Primer combate: \n¡{guerrero.nombre} se va a enfrentar a un {orco.nombre}!\nVida {orco.nombre}: {orco.vida}")
@@ -41,38 +42,67 @@ while guerrero.esta_vivo() and orco.esta_vivo():
 
 
 
-"""
+
 # Pruebas para ver si las pociones funcionan. La poción tiene el método tomar_pocion, recibe un personaje y modifica directamente sus atributos según el tipo de poción.
 print("Vida antes:", guerrero.vida)
 vida.tomar_pocion(guerrero)
 print("Vida después:", guerrero.vida)
 """
 
-"""
-def menu():
-    while True:
-        print("\n------ MENÚ PRINCIPAL ------")
-        print("| 1. Elegir personaje        |")
-        print("| 2. Iniciar juego        |")
-        print("| 3. Salir                  |")
-        print("-----------------------------")
+# Mira si te parece bien este tipo de menú para el combate, si quieres tocarlo hazlo.
 
-        opcion = input("Elige una opción: ")
+def combate(personaje, enemigo) -> bool:
+    print(f"\n¡{personaje.nombre} se enfrenta a {enemigo.nombre}!")
+    print(f"Vida {enemigo.nombre}: {enemigo.vida}")
+
+    while personaje.esta_vivo() and enemigo.esta_vivo():
+        print("\n--¿Qué quieres hacer?--")
+        print("1- Atacar")
+        print("2- Defender")
+        print("3- Habilidad especial")
+        print("---------------------------")
+        
+        opcion = input(f"¿Qué va a hacer {personaje.nombre}? ")
 
         match opcion:
             case "1":
-                elegir_personaje()
-
+                personaje.atacar(enemigo)
             case "2":
-                iniciar_juego()
-
+                personaje.defender(enemigo)
             case "3":
-                print("Saliendo del juego...")
-                break
+                personaje.habilidad_especial(enemigo)
             case _:
-                print("Opción no válida")
+                print(f"{personaje.nombre} no sabe hacer eso.")
                 continue
+
+        # Si el enemigo muere, termina el combate
+        if not enemigo.esta_vivo():
+            print(f"\n{enemigo.nombre} ha sido derrotado.")
+            return True
+
+        # Habilidad especial del enemigo (ejemplo: cuando baja de la mitad)
+        if enemigo.vida <= 60:
+            enemigo.habilidad_especial()
+
+        # Turno del enemigo
+        enemigo.atacar(personaje)
+
+    return personaje.esta_vivo()
                 
+def iniciar_juego():
+    # Prueba de combate completo
+    personaje = Guerrero("Cadalas")
+
+    enemigos = [Orco(), Arpia(), Oscar()]
+
+    for enemigo in enemigos:
+        gana = combate(personaje, enemigo)
+        if not gana:
+            print("\nGAME OVER.")
+            return
+
+    print("\n¡Has derrotado a todos los enemigos! ¡Victoria!")
+
+
 if __name__ == "__main__":
-    menu()
-"""
+    iniciar_juego()
