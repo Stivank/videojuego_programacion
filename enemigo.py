@@ -4,7 +4,7 @@ class Enemigo:
         self.vida = vida
         self._daño = daño
         self._nivel = nivel
-        print("El enemigo ha sido creado.")  # cambiado
+        # print("El enemigo ha sido creado.")  # Ya sabemos que funciona. La quito para que no salga en el juego.
 
     @property
     def nombre(self) -> str:

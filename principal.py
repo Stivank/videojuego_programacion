@@ -13,36 +13,8 @@ import pocion
 vida = pocion.Pocion("Recuperación de vida", 10)
 daño = pocion.Pocion("Daño", 10)
 escudo = pocion.Pocion("Escudo", 10)
-orco = Orco()
-arpia = Arpia()
-boss = Oscar()
 
 """
-# Prueba de las habilidades de los personajes. Funcionan, pero a veces imprimen frases que no quiero. Revisar.
-guerrero = Guerrero("Cadalas")
-print(f"Primer combate: \n¡{guerrero.nombre} se va a enfrentar a un {orco.nombre}!\nVida {orco.nombre}: {orco.vida}")
-while guerrero.esta_vivo() and orco.esta_vivo():
-    print("1- Atacar\n2- Defender\n3- Habilidad especial")
-    opcion = ""
-    while opcion != range(1,4):
-        opcion = input(f"¿Qué va a hacer {guerrero.nombre}? ")
-        match opcion:
-            case "1":
-                guerrero.atacar(orco)
-            case "2":
-                guerrero.defender(orco)
-            case "3":
-                guerrero.habilidad_especial(orco)
-            case _:
-                print(f"{guerrero.nombre} no sabe hacer eso.")
-                opcion = input(f"¿Qué va a hacer {guerrero.nombre}?")
-    if orco.vida <= 60:
-        orco.habilidad_especial() # Habría que pasar el personaje como parámetro una vez modificada la función en la clase Orco.
-    orco.atacar()
-
-
-
-
 # Pruebas para ver si las pociones funcionan. La poción tiene el método tomar_pocion, recibe un personaje y modifica directamente sus atributos según el tipo de poción.
 print("Vida antes:", guerrero.vida)
 vida.tomar_pocion(guerrero)
@@ -50,13 +22,19 @@ print("Vida después:", guerrero.vida)
 """
 
 # Mira si te parece bien este tipo de menú para el combate, si quieres tocarlo hazlo.
+# Notas:
+# - En mis clases, debo revisar los feedbacks. Devuelven frases repetidas o que no se deberían mostrar en determinados momentos. La función 'defender()' es la que dice cosas más raras.
+# - Pendiente implementar pociones. Al avanzar de combate, el personaje no tiene vida suficiente y muere en seguida.
+# - El trabajo de Stivan funciona estupendo. Tal vez pueda revisar sus clases para ver cómo implementar el feedback en las mías.
+# - Tal vez haya que hacer que las pociones recuperen más vida
 
 def combate(personaje, enemigo) -> bool:
+    contador_habilidad_enemigo = 0
     print(f"\n¡{personaje.nombre} se enfrenta a {enemigo.nombre}!")
     print(f"Vida {enemigo.nombre}: {enemigo.vida}")
 
     while personaje.esta_vivo() and enemigo.esta_vivo():
-        print("\n--¿Qué quieres hacer?--")
+        print("\n--¿Qué quieres hacer?--") # Redundante si se va a preguntar lo mismo más adelante.
         print("1- Atacar")
         print("2- Defender")
         print("3- Habilidad especial")
@@ -67,6 +45,7 @@ def combate(personaje, enemigo) -> bool:
         match opcion:
             case "1":
                 personaje.atacar(enemigo)
+                print(f"El guerrero {personaje.nombre} ataca con su espada.")
             case "2":
                 personaje.defender(enemigo)
             case "3":
@@ -81,8 +60,10 @@ def combate(personaje, enemigo) -> bool:
             return True
 
         # Habilidad especial del enemigo (ejemplo: cuando baja de la mitad)
-        if enemigo.vida <= 60:
+        # La habilidad especial del enemigo se acumulaba cada turno. Añado una variable para hacer que solo actúe una vez.
+        if enemigo.vida <= 60 and contador_habilidad_enemigo == 0:
             enemigo.habilidad_especial()
+            contador_habilidad_enemigo = 1
 
         # Turno del enemigo
         enemigo.atacar(personaje)
@@ -99,10 +80,9 @@ def iniciar_juego():
         gana = combate(personaje, enemigo)
         if not gana:
             print("\nGAME OVER.")
-            return
+            return # ?
 
     print("\n¡Has derrotado a todos los enemigos! ¡Victoria!")
-
 
 if __name__ == "__main__":
     iniciar_juego()
