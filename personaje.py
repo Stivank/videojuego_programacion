@@ -1,4 +1,9 @@
 
+
+# CAMBIOS RECIENTES (2026-01-02)
+# - Añadido atributo 'escudo' al personaje (armadura que absorbe daño).
+# - 'recibir_daño' ahora aplica: escudo -> defensa (reduce a la mitad) -> vida, con mensajes de feedback.
+
 class Personaje:
     def __init__(self, nombre: str, rol: str, vida: int, daño: int, nivel: int) -> None:
         self._nombre = nombre
@@ -6,6 +11,7 @@ class Personaje:
         self.vida = vida
         self._daño = daño
         self._nivel = nivel
+        self.escudo = 0  # Puntos de armadura/escudo que absorben daño antes de la vida
         print("El personaje ha sido creado.")
 
     @property
@@ -43,12 +49,49 @@ class Personaje:
     def esta_vivo(self) -> bool:
         return self.vida > 0
 
-    def recibir_daño(self, cantidad: int, defensa) -> None:
-        if defensa == True:
-            pass
-        else:
-            self.vida = max(0, self.vida - cantidad)
-            if not self.esta_vivo(): # Implementa la función 'esta_vivo()'
-                print(f"¡Oh, no!¡{self.nombre} ha muerto!")
+    """
+    Guía de la función 'recibir_daño': (Para mi futuro yo en la exposicion :=D)    
+    Esta función se llama cuando un enemigo ataca al personaje.
+    Su trabajo es decidir cuánta vida pierde el personaje, teniendo en cuenta:
+    El escudo (armadura que absorbe daño).
+    Si el personaje se defendió ese turno.
+    Si el personaje muere o sobrevive.
+    """
+    def recibir_daño(self, cantidad: int, defensa: bool) -> None:
+        
+        """Aplica daño al personaje teniendo en cuenta escudo y defensa.
+        Orden:
+        1) El escudo absorbe primero.
+        2) Si el jugador se defendió, el daño restante se reduce a la mitad.
+        3) Lo que quede reduce la vida.
+        """
+        
+        daño = max(0, int(cantidad))
+
+        # 1) Absorción por escudo
+        if self.escudo > 0 and daño > 0:
+            absorbido = min(self.escudo, daño)
+            self.escudo -= absorbido
+            daño -= absorbido
+            print(f"El escudo absorbe {absorbido} de daño. Escudo restante: {self.escudo}")
+        elif self.escudo > 0 and daño == 0:
+            print(f"El escudo permanece intacto. Escudo actual: {self.escudo}")
+
+        # 2) Reducción por defensa
+        if defensa and daño > 0:
+            reducido = (daño + 1) // 2  # redondeo hacia arriba para que se note
+            print(f"¡{self.nombre} se defiende! Daño reducido de {daño} a {reducido}.")
+            daño = reducido
+        elif defensa and daño == 0:
+            print(f"¡{self.nombre} se defiende! No recibe daño.")
+
+        # 3) Aplicación a vida
+        if daño > 0:
+            self.vida = max(0, self.vida - daño)
+            if not self.esta_vivo():
+                print(f"¡Oh, no! ¡{self.nombre} ha muerto!")
             else:
-                print(f"¡{self.nombre} ha sido herido!")
+                print(f"¡{self.nombre} ha sido herido! Vida restante: {self.vida}")
+        else:
+            if self.esta_vivo():
+                print(f"{self.nombre} no recibe daño. Vida: {self.vida}")

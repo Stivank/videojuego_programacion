@@ -1,3 +1,5 @@
+# CAMBIOS RECIENTES (2026-01-02)
+# - 'Poción Escudo' ahora crea armadura en el personaje: absorbe daño antes de restar vida (no altera el daño del enemigo).
 
 class Pocion():
     def __init__(self, tipo: str, efecto: int) -> None:
@@ -44,10 +46,12 @@ class Daño(Pocion):
         print(f"{personaje.nombre} aumenta su daño en {self.efecto} puntos.")
 
 class Escudo(Pocion): # Le quita daño al enemigo, pero se lo quita para siempre. Si queremos que sea así, perfecto. Si no, hay que encontrar la forma de arreglarlo.
+    # CAMBIO (2026-01-02): Se ha 'arreglado' para que el escudo sea una armadura que absorbe X puntos de daño (no modifica al enemigo).
     def  __init__(self, tipo = "Generación de escudo", efecto = 15):
         super().__init__(tipo, efecto)
 
-    def tomar_pocion(self, personaje, enemigo):
+    def tomar_pocion(self, personaje):
         print(f"{personaje.nombre} se toma una poción de {self.tipo}.")
-        enemigo.daño -= self.efecto
+        personaje.escudo += self.efecto
         print(f"{personaje.nombre} obtiene un escudo de {self.efecto} puntos.")
+        print(f"Escudo total: {personaje.escudo}")

@@ -10,16 +10,6 @@ from oscar import Oscar
 
 from pocion import Vida, Daño, Escudo
 
-# Notas:
-# - Defensa implementada.
-# - Pociones implementadas. Fíjate especialmente en la de escudo a ver si te gusta. Te la he descrito en su clase.
-# - Elección de personajes implementada.
-# - Subida de nivel implementada.
-
-# HECHO. Podría considerarse que el juego está terminado, aunque hay detalles de los que me gustaría saber tu opinión en cuanto a nivelar el juego:
-#   1) El efecto de las pociones, la función de la de escudo y el hecho de que se rellenen en cada combate.
-#   2) La función de subida de nivel, en concreto la parte en la que recupera la vida por completo al iniciar cada combate.
-
 def combate(personaje, enemigo) -> bool:
     # Cada tipo de poción es ahora un objeto distinto que hereda de 'Pocion'
     pocion_vida = Vida()
@@ -27,6 +17,7 @@ def combate(personaje, enemigo) -> bool:
     pocion_escudo = Escudo()
     cantidad_pociones = 3 # Variable para que las pociones no sean infinitas. Al estar generadas en esta parte del programa, se rellenan al inicio de cada combate. No sé si queremos que sea así
     contador_habilidad_enemigo = 0 # Sirve para conseguir que la habilidad del enemigo solo actúe una vez
+    vida_inicial_enemigo = enemigo.vida  # Para activar su habilidad especial al 50% de su vida inicial
     print(f"\n¡{personaje.nombre} se enfrenta a {enemigo.nombre}!")
     print(f"Vida {enemigo.nombre}: {enemigo.vida}")
 
@@ -57,7 +48,7 @@ def combate(personaje, enemigo) -> bool:
                         case "2":
                             pocion_daño.tomar_pocion(personaje)
                         case "3":
-                            pocion_escudo.tomar_pocion(personaje, enemigo)
+                            pocion_escudo.tomar_pocion(personaje)
                         case _:
                             print("No tienes esa poción")
                             continue
@@ -78,7 +69,7 @@ def combate(personaje, enemigo) -> bool:
 
         # Habilidad especial del enemigo (ejemplo: cuando baja de la mitad)
         # La habilidad especial del enemigo se acumulaba cada turno. Añado una variable para hacer que solo actúe una vez.
-        if enemigo.vida <= 60 and contador_habilidad_enemigo == 0:
+        if enemigo.vida <= (vida_inicial_enemigo // 2) and contador_habilidad_enemigo == 0:
             enemigo.habilidad_especial()
             contador_habilidad_enemigo = 1
 
@@ -89,10 +80,10 @@ def combate(personaje, enemigo) -> bool:
     return personaje.esta_vivo()
 
 # Función para subir de nivel después de cada combate. Amplía vida y sube el daño.
-def subir_nivel(personaje, vida_personaje_default):
+def subir_nivel(personaje, vida_extra: int = 15, daño_extra: int = 10) -> None:
     personaje.nivel += 1
-    personaje.vida = vida_personaje_default + 15
-    personaje.daño += 10
+    personaje.vida += vida_extra
+    personaje.daño += daño_extra
     print(f"¡{personaje.nombre} ha subido de nivel!")
     print(f"Nivel: {personaje.nivel}, Vida: {personaje.vida}, Daño: {personaje.daño}")
 
@@ -116,17 +107,37 @@ def iniciar_juego():
             case _:
                 print("Ese personaje no está disponible.")
 
-    vida_personaje_default = personaje.vida # Esta variable sirve para que el personaje recupere la vida al subir de nivel. Podríamos no hacerlo así y dejarlo con la que se queda al terminar cada combate
-
     for enemigo in enemigos:
         gana = combate(personaje, enemigo)
         if not gana:
             print("\nGAME OVER.")
             return # ?
         else:
-            subir_nivel(personaje, vida_personaje_default)
+            subir_nivel(personaje)
 
     print("\n¡Has derrotado a todos los enemigos! ¡Victoria!")
 
 if __name__ == "__main__":
     iniciar_juego()
+    
+# Notas:
+# - Defensa implementada.
+# - Pociones implementadas. Fíjate especialmente en la de escudo a ver si te gusta. Te la he descrito en su clase.
+# - Elección de personajes implementada.
+# - Subida de nivel implementada.
+
+# HECHO. Podría considerarse que el juego está terminado, aunque hay detalles de los que me gustaría saber tu opinión en cuanto a nivelar el juego:
+#   1) El efecto de las pociones, la función de la de escudo y el hecho de que se rellenen en cada combate.
+#   2) La función de subida de nivel, en concreto la parte en la que recupera la vida por completo al iniciar cada combate.
+
+
+# CAMBIOS RECIENTES (2026-01-02)
+# - Interfaz Habilidad corregida: ahora los métodos (atacar, defender
+#   y habilidad_especial) están definidos tal y como se usan en el juego.
+#   Antes la interfaz no coincidía con el código real y podía llevar
+#   a confusión al leer o mantener el programa.
+#
+# - 'Escudo' ahora es armadura que absorbe daño (ver pocion.py + personaje.py).
+# - Defensa ahora reduce daño y muestra feedback (ver personaje.py).
+# - Habilidad especial del enemigo se activa al 50% de su vida inicial (no valor fijo).
+# - Subida de nivel: suma vida/daño (+15/+10 por defecto) sin resetear vida a un máximo fijo.
