@@ -1,8 +1,9 @@
-
-
-# CAMBIOS RECIENTES (2026-01-02)
-# - Añadido atributo 'escudo' al personaje (armadura que absorbe daño).
-# - 'recibir_daño' ahora aplica: escudo -> defensa (reduce a la mitad) -> vida, con mensajes de feedback.
+# =========================
+# CLASE PERSONAJE
+# =========================
+# Esta clase representa a cualquier personaje controlado por el jugador.
+# Define sus atributos básicos (vida, daño, nivel, etc.)
+# y el comportamiento común que todos los personajes comparten.
 
 class Personaje:
     def __init__(self, nombre: str, rol: str, vida: int, daño: int, nivel: int) -> None:
@@ -13,6 +14,12 @@ class Personaje:
         self._nivel = nivel
         self.escudo = 0  # Puntos de armadura/escudo que absorben daño antes de la vida
         print("El personaje ha sido creado.")
+
+    # =========================
+    # GETTERS Y SETTERS
+    # =========================
+    # Se usan para acceder y modificar atributos "privados"
+    # de forma controlada.
 
     @property
     def nombre(self) -> str:
@@ -45,8 +52,9 @@ class Personaje:
     @nivel.setter
     def nivel(self, nivel: int) -> None:
         self._nivel = nivel
-        
-    def esta_vivo(self) -> bool:
+
+    # Devuelve True si el personaje sigue vivo.
+    def esta_vivo(self) -> bool: 
         return self.vida > 0
 
     """
@@ -69,6 +77,7 @@ class Personaje:
         daño = max(0, int(cantidad))
 
         # 1) Absorción por escudo
+        # El escudo absorbe el daño antes de que llegue a la vida.
         if self.escudo > 0 and daño > 0:
             absorbido = min(self.escudo, daño)
             self.escudo -= absorbido
@@ -77,7 +86,8 @@ class Personaje:
         elif self.escudo > 0 and daño == 0:
             print(f"El escudo permanece intacto. Escudo actual: {self.escudo}")
 
-        # 2) Reducción por defensa
+        # 2) Reducción por defensa 
+        # Si el jugador se defendió, el daño restante se reduce a la mitad.
         if defensa and daño > 0:
             reducido = (daño + 1) // 2  # redondeo hacia arriba para que se note
             print(f"¡{self.nombre} se defiende! Daño reducido de {daño} a {reducido}.")
@@ -95,3 +105,7 @@ class Personaje:
         else:
             if self.esta_vivo():
                 print(f"{self.nombre} no recibe daño. Vida: {self.vida}")
+
+# CAMBIOS RECIENTES (2026-01-02)
+# - Añadido atributo 'escudo' al personaje (armadura que absorbe daño).
+# - 'recibir_daño' ahora aplica: escudo -> defensa (reduce a la mitad) -> vida, con mensajes de feedback.
